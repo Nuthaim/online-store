@@ -9,7 +9,7 @@ const VerifyEmail = () => {
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
@@ -43,7 +43,7 @@ const VerifyEmail = () => {
     } catch (err) {
       console.error('Verify email error:', err);
       setError(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         'Failed to verify email. Please try again.'
       );
     } finally {
@@ -53,7 +53,7 @@ const VerifyEmail = () => {
 
   const handleResendVerification = async () => {
     if (!email) return;
-    
+
     try {
       setIsVerifying(true);
       setError('');
@@ -71,7 +71,7 @@ const VerifyEmail = () => {
     } catch (err) {
       console.error('Resend verification error:', err);
       setError(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         'Failed to resend verification email. Please try again.'
       );
     } finally {
@@ -101,7 +101,7 @@ const VerifyEmail = () => {
                 </div>
                 <div>
                   <span className="text-xl sm:text-2xl lg:text-2xl font-bold text-white">
-                    MUKHTI
+                    GAG
                   </span>
                   <span className="text-sm sm:text-base lg:text-sm text-white/80 block">
                     Premium Store
@@ -122,11 +122,11 @@ const VerifyEmail = () => {
                 <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 lg:mb-4">
                   <FaCheckCircle className="w-8 h-8 sm:w-10 sm:h-10 lg:w-8 lg:h-8 text-green-600" />
                 </div>
-                
+
                 <h2 className="text-lg sm:text-xl lg:text-lg font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-2">
                   Email Verified Successfully!
                 </h2>
-                
+
                 <p className="text-sm sm:text-base lg:text-sm text-gray-600 mb-4 sm:mb-6 lg:mb-4">
                   Your email address has been successfully verified. Your account is now fully activated and you can start shopping!
                 </p>
@@ -188,7 +188,7 @@ const VerifyEmail = () => {
               </div>
               <div>
                 <span className="text-xl sm:text-2xl lg:text-2xl font-bold text-white">
-                  MUKHTI
+                  GAG
                 </span>
                 <span className="text-sm sm:text-base lg:text-sm text-white/80 block">
                   Premium Store
@@ -211,11 +211,11 @@ const VerifyEmail = () => {
                   <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 lg:mb-4">
                     <FaSpinner className="w-8 h-8 sm:w-10 sm:h-10 lg:w-8 lg:h-8 text-blue-600 animate-spin" />
                   </div>
-                  
+
                   <h2 className="text-lg sm:text-xl lg:text-lg font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-2">
                     Verifying Email...
                   </h2>
-                  
+
                   <p className="text-sm sm:text-base lg:text-sm text-gray-600">
                     Please wait while we verify your email address.
                   </p>
@@ -225,11 +225,11 @@ const VerifyEmail = () => {
                   <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 lg:mb-4">
                     <FaExclamationTriangle className="w-8 h-8 sm:w-10 sm:h-10 lg:w-8 lg:h-8 text-red-600" />
                   </div>
-                  
+
                   <h2 className="text-lg sm:text-xl lg:text-lg font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-2">
                     Verification Failed
                   </h2>
-                  
+
                   <p className="text-sm sm:text-base lg:text-sm text-gray-600 mb-4 sm:mb-6 lg:mb-4">
                     {error}
                   </p>
@@ -263,11 +263,11 @@ const VerifyEmail = () => {
                   <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 lg:mb-4">
                     <FaEnvelope className="w-8 h-8 sm:w-10 sm:h-10 lg:w-8 lg:h-8 text-blue-600" />
                   </div>
-                  
+
                   <h2 className="text-lg sm:text-xl lg:text-lg font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-2">
                     Email Verification
                   </h2>
-                  
+
                   <p className="text-sm sm:text-base lg:text-sm text-gray-600">
                     Click the button below to verify your email address.
                   </p>

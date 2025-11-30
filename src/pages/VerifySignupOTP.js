@@ -10,7 +10,7 @@ const VerifySignupOTP = () => {
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const email = searchParams.get('email');
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const VerifySignupOTP = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (otp.length !== 6) {
       setError('Please enter a valid 6-digit OTP');
       return;
@@ -55,7 +55,7 @@ const VerifySignupOTP = () => {
     } catch (err) {
       console.error('Verify OTP error:', err);
       setError(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         'Failed to verify OTP. Please try again.'
       );
     } finally {
@@ -65,7 +65,7 @@ const VerifySignupOTP = () => {
 
   const handleResendOTP = async () => {
     if (!email) return;
-    
+
     try {
       setIsVerifying(true);
       setError('');
@@ -83,7 +83,7 @@ const VerifySignupOTP = () => {
     } catch (err) {
       console.error('Resend OTP error:', err);
       setError(
-        err.response?.data?.message || 
+        err.response?.data?.message ||
         'Failed to resend OTP. Please try again.'
       );
     } finally {
@@ -113,7 +113,7 @@ const VerifySignupOTP = () => {
                 </div>
                 <div>
                   <span className="text-xl sm:text-2xl lg:text-2xl font-bold text-white">
-                    MUKHTI
+                    GAG
                   </span>
                   <span className="text-sm sm:text-base lg:text-sm text-white/80 block">
                     Premium Store
@@ -134,11 +134,11 @@ const VerifySignupOTP = () => {
                 <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 lg:mb-4">
                   <FaCheckCircle className="w-8 h-8 sm:w-10 sm:h-10 lg:w-8 lg:h-8 text-green-600" />
                 </div>
-                
+
                 <h2 className="text-lg sm:text-xl lg:text-lg font-bold text-gray-900 mb-2 sm:mb-3 lg:mb-2">
                   Email Verified Successfully!
                 </h2>
-                
+
                 <p className="text-sm sm:text-base lg:text-sm text-gray-600 mb-4 sm:mb-6 lg:mb-4">
                   Your email address has been successfully verified. Your account is now fully activated and you can start shopping!
                 </p>
@@ -200,7 +200,7 @@ const VerifySignupOTP = () => {
               </div>
               <div>
                 <span className="text-xl sm:text-2xl lg:text-2xl font-bold text-white">
-                  MUKHTI
+                  GAG
                 </span>
                 <span className="text-sm sm:text-base lg:text-sm text-white/80 block">
                   Premium Store
@@ -293,8 +293,8 @@ const VerifySignupOTP = () => {
             <div className="mt-6 sm:mt-8 lg:mt-6 text-center">
               <p className="text-sm sm:text-base lg:text-sm text-gray-600">
                 Remember your password?{' '}
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="text-blue-600 hover:text-blue-700 font-bold hover:underline underline-offset-2 transition-colors duration-200"
                 >
                   Sign in here
