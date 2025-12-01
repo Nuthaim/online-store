@@ -18,6 +18,12 @@ Your application has two separate deployments:
 
 ## Deployment Steps
 
+> [!IMPORTANT]
+> **Vercel Serverless Architecture**: Your backend uses a special structure for Vercel:
+> - Entry point: `backend/api/index.js` (exports Express app)
+> - Original: `backend/server.js` (for local development with `app.listen()`)
+> - Vercel automatically handles the serverless function execution
+
 ### 1. Deploy Backend (API)
 
 #### Option A: Using Vercel Dashboard (Recommended for first deployment)
@@ -32,6 +38,19 @@ Your application has two separate deployments:
    - **Install Command**: `npm install`
 
 4. Add Environment Variables (click "Environment Variables"):
+   
+   > **Important**: Replace `your-backend-domain` and `your-frontend-domain` with actual domains after deployment.
+   > - `GOOGLE_CALLBACK_URL` should point to your **BACKEND** domain
+   > - `FRONTEND_URL` should point to your **FRONTEND** domain
+   > 
+   > Example:
+   > - Backend deployed at: `https://gag-backend.vercel.app`
+   > - Frontend deployed at: `https://gag-store.vercel.app`
+   > 
+   > Then:
+   > - `GOOGLE_CALLBACK_URL=https://gag-backend.vercel.app/api/auth/google/callback`
+   > - `FRONTEND_URL=https://gag-store.vercel.app`
+
    ```
    NODE_ENV=production
    MONGODB_URI=your_mongodb_connection_string
