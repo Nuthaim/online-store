@@ -19,15 +19,11 @@ passport.deserializeUser(async (id, done) => {
 
 // Only configure Google OAuth if credentials are provided
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-  // Determine backend URL for callback
-  const backendURL = process.env.NODE_ENV === 'production' 
-    ? 'https://mukthi-backend.onrender.com'
-    : 'http://localhost:5000';
-  
-  const callbackURL = `${backendURL}/api/auth/google/callback`;
-  
+  // Use GOOGLE_CALLBACK_URL from environment, or construct default for development
+  const callbackURL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback';
+
   console.log('🔐 Google OAuth callback URL:', callbackURL);
-  
+
   passport.use(
     new GoogleStrategy(
       {
