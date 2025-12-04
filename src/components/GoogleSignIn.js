@@ -14,6 +14,8 @@ const GoogleSignIn = ({ onSuccess, onError }) => {
       console.log('🚀 Starting Google OAuth...');
 
       const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    console.log("baseURL:", baseURL);
+    
       
       // Simple redirect approach - works reliably on all devices
       console.log('🔄 Redirecting to Google OAuth...');
