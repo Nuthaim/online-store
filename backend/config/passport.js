@@ -2,20 +2,13 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (error) {
-    done(error, null);
-  }
-});
-
-
+// ============================================
+// STATELESS OAUTH - NO SESSION REQUIRED
+// ============================================
+// We don't use serializeUser/deserializeUser because:
+// 1. Vercel serverless functions don't share memory
+// 2. Sessions won't persist between function invocations
+// 3. We use JWT tokens instead for stateless authentication
 
 // Only configure Google OAuth if credentials are provided
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
