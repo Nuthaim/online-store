@@ -7,7 +7,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const fileUpload = require('express-fileupload');
-const session = require('express-session');
 
 // Load environment variables
 dotenv.config({ path: './config.env' });
@@ -47,21 +46,16 @@ if (process.env.NODE_ENV === 'production') {
   }));
 }
 
-// Session configuration for OAuth
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+// ============================================
+// STATELESS PASSPORT CONFIGURATION
+// ============================================
+// No session middleware needed - works the same locally and on Vercel
+// Google OAuth uses stateless JWT tokens instead of sessions
+// This ensures compatibility with serverless functions that don't share memory
 
-// Initialize passport after environment variables are loaded
+// Initialize passport in stateless mode (no session support)
 const passport = require('./config/passport');
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Add a middleware to log requests for debugging
 app.use((req, res, next) => {
@@ -94,7 +88,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const connectDB = async () => {
   try {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
-    
+
     const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 30000, // 30 seconds timeout
       socketTimeoutMS: 45000, // 45 seconds socket timeout
@@ -111,7 +105,7 @@ const connectDB = async () => {
       // Heartbeat settings to detect connection issues faster
       heartbeatFrequencyMS: 10000
     });
-    
+
     console.log('✅ MongoDB connected successfully');
     console.log(`📊 Database: ${conn.connection.name}`);
     console.log(`🌐 Host: ${conn.connection.host}`);
@@ -157,8 +151,8 @@ connectDB();
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'Server is running',
     timestamp: new Date().toISOString(),
     cors: 'enabled'
@@ -193,7 +187,7 @@ app.use('/api/homepage', require('./routes/homePageSettings'));
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     message: 'Something went wrong!',
     error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
