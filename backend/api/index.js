@@ -10,7 +10,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const fileUpload = require('express-fileupload');
-const session = require('express-session');
 
 // Load environment variables
 dotenv.config({ path: './config.env' });
@@ -41,21 +40,16 @@ if (process.env.NODE_ENV === 'production') {
     }));
 }
 
-// Session configuration for OAuth
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-}));
+// ============================================
+// STATELESS PASSPORT CONFIGURATION
+// ============================================
+// No session middleware needed for Vercel serverless deployment
+// Google OAuth uses stateless JWT tokens instead of sessions
+// This ensures compatibility with serverless functions that don't share memory
 
-// Initialize passport after environment variables are loaded
+// Initialize passport in stateless mode (no session support)
 const passport = require('./config/passport');
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Add a middleware to log requests for debugging
 app.use((req, res, next) => {
