@@ -115,14 +115,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Handle preflight requests
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.get('origin') || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
-});
+// NOTE: Preflight requests (OPTIONS) are automatically handled by the cors() middleware above
+// DO NOT add manual OPTIONS handler here - it causes duplicate CORS headers!
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
