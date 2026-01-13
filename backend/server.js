@@ -27,25 +27,70 @@ app.use(compression());
 // });
 // app.use('/api/', limiter);
 
-// Simplified CORS configuration for development
-if (process.env.NODE_ENV === 'production') {
-  // Strict CORS for production
-  app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
-} else {
-  // Permissive CORS for development to avoid issues
-  app.use(cors({
-    origin: true, // Allow all origins in development
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    optionsSuccessStatus: 200
-  }));
-}
+// Dynamic CORS configuration
+const getAllowedOrigins = () => {
+  const origins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+  ];
+
+  // Add frontend URL from environment
+  if (process.env.FRONTEND_URL) {
+    origins.push(process.env.FRONTEND_URL);
+
+    // If frontend URL is https, also add www variant automatically
+    if (process.env.FRONTEND_URL.startsWith('https://')) {
+      try {
+        const url = new URL(process.env.FRONTEND_URL);
+        const domain = url.hostname;
+
+        // Add www variant if not already present
+        if (!domain.startsWith('www.')) {
+          origins.push(`https://www.${domain}`);
+        } else {
+          // If www is present, also add non-www variant
+          origins.push(`https://${domain.replace('www.', '')}`);
+        }
+      } catch (err) {
+        console.error('Error parsing FRONTEND_URL:', err);
+      }
+    }
+  }
+
+  return origins.filter(Boolean);
+};
+
+const allowedOrigins = getAllowedOrigins();
+console.log('🌐 Allowed CORS origins:', allowedOrigins);
+
+// CORS configuration
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, or same-origin)
+    if (!origin) return callback(null, true);
+
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+
+    // Check if origin is in allowed list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('❌ CORS blocked origin:', origin);
+      console.log('✅ Allowed origins:', allowedOrigins);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  optionsSuccessStatus: 200,
+  maxAge: 86400 // 24 hours
+}));
 
 // Session configuration
 app.use(session({
