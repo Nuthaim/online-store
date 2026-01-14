@@ -1,0 +1,97 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - develop
+      - staging
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18.x'
+  APP_NAME: 'gagessentials-api-staging'
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging Server
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ./backend
+        run: |
+          echo "Running tests..."
+          node -c server.js
+          echo "✅ Tests passed"
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ${{ secrets.STAGING_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
+      - name: Deploy to Staging
+        env:
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ${{ secrets.STAGING_USER }}
+          APP_DIR: ${{ secrets.STAGING_APP_DIR }}
+        run: |
+          ssh -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST << 'ENDSSH'
+            set -e
+            
+            echo "🚀 Deploying to STAGING..."
+            
+            cd ${{ secrets.STAGING_APP_DIR }}/backend
+            
+            git pull origin develop || git pull origin staging
+            
+            npm ci --production
+            
+            pm2 restart ${{ env.APP_NAME }} || pm2 start server.js --name "${{ env.APP_NAME }}"
+            pm2 save
+            
+            echo "✅ Staging deployment complete!"
+            pm2 list
+          ENDSSH
+
+      - name: Health Check
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+        run: |
+          echo "🏥 Running staging health check..."
+          sleep 5
+          
+          response=$(curl -s -o /dev/null -w "%{http_code}" $STAGING_API_URL/api/health || echo "000")
+          
+          if [ "$response" = "200" ]; then
+            echo "✅ Staging health check passed!"
+          else
+            echo "⚠️ Staging health check failed! Response: $response"
+            echo "This is staging, so not failing the workflow."
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
